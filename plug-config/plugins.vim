@@ -37,6 +37,7 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 " Plug 'preservim/nerdtree'
 " Git
 Plug 'tpope/vim-fugitive'
+    let maplocalleader = ","
 Plug 'tpope/vim-rhubarb'
 " Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'

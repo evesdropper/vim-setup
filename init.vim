@@ -8,7 +8,7 @@ source $HOME/.config/nvim/plug-config/coc.vim
 source $HOME/.config/nvim/themes/airline.vim
 source $HOME/.config/nvim/plug-config/fzf.vim
 source $HOME/.config/nvim/plug-config/barbar.vim
-" source $HOME/.config/nvim/themes/onedark.vim
+source $HOME/.config/nvim/plug-config/fugitive.vim
 
 let g:airline_theme='codedark'
 set t_Co=256
