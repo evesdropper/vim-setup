@@ -36,9 +36,10 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend upda
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 " Plug 'preservim/nerdtree'
 " Git
-" Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 " Plug 'Xuyuanp/nerdtree-git-plugin'
-" Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-gitgutter'
 " Sneak
 Plug 'justinmk/vim-sneak'
 " Surround 
@@ -48,6 +49,7 @@ Plug 'joshdick/onedark.vim'
 Plug 'tomasiser/vim-code-dark'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ryanoasis/vim-devicons'
+Plug 'kyazdani42/nvim-web-devicons'
 " syntax highlighting
 Plug 'sheerun/vim-polyglot'
 " Commenting 
