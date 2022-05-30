@@ -20,7 +20,7 @@ Plug 'sirver/ultisnips'
 " I decided I might actually be okay with markdown for some quick non math
 " intensive programming
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-let g:mkdp_preview_options = {
+    let g:mkdp_preview_options = {
     \ 'mkit': {},
     \ 'katex': {},
     \ 'uml': {},
@@ -34,10 +34,11 @@ let g:mkdp_preview_options = {
     \ 'disable_filename': 0,
     \ 'toc': {}
     \ }
-let g:mkdp_theme = 'dark'
-nmap <C-s> <Plug>MarkdownPreview
-nmap <M-s> <Plug>MarkdownPreviewStop
-nmap <C-p> <Plug>MarkdownPreviewToggle
+    let maplocalleader = ","
+    let g:mkdp_theme = 'dark'
+    nmap <Leader>lv <Plug>MarkdownPreview
+    nmap <M-s> <Plug>MarkdownPreviewStop
+    nmap <C-p> <Plug>MarkdownPreviewToggle
 " Better Syntax Support
 Plug 'sheerun/vim-polyglot'
 " Auto pairs for '(' '[' '{'
