@@ -1,0 +1,618 @@
+\ProvidesPackage{random}
+% ----- Preface ----- %
+% Personal preamble created with inspiration from smartspot2's preamble.sty (https://smartspot2.github.io/assets/latex/preamble.sty). Added modifications to support personal typesetting uses.
+% --- Settings --- %
+%% - Supports code in tcolorboxes
+
+
+% ----- Options -----
+% --- Groups ---
+%% - Lecture Notes
+%% - Standalone Notes 
+%% - Homeworks
+%% - Cheat Sheets
+%% - Slides (Teaching) 
+% --- Misc Options ---
+%% - TBD
+
+% Initializing Options
+\newif\ifopt@tikz\opt@tikztrue % global
+\newif\ifopt@chapterheadings\opt@chapterheadingsfalse
+
+\newif\ifopt@tcbtheorems\opt@tcbtheoremsfalse % notes options 
+\newif\ifopt@fancysections\opt@fancysectionsfalse
+
+\newif\ifopt@cheatsheetlengths\opt@cheatsheetlengthsfalse
+\newif\ifopt@smallercomponents\opt@smallercomponentsfalse
+\newif\ifopt@narrowmargins\opt@narrowmarginsfalse
+
+\newif\ifoptgroup@lecture\optgroup@lecturefalse % groups 
+\newif\ifoptgroup@cheatsheet\optgroup@cheatsheetfalse
+
+% Declaring Options
+\DeclareOption{lecture}{%
+    \optgroup@lecturetrue%
+    \opt@tikztrue%
+    \opt@tcbtheoremstrue%
+    \opt@fancysectionstrue%
+}
+
+\DeclareOption{cheatsheet}{%
+    \optgroup@cheatsheettrue%
+    \opt@tikztrue%
+    \opt@narrowmarginstrue%
+    \opt@cheatsheetlengthstrue%
+}
+
+\DeclareOption{report}{%
+    \opt@chapterheadingstrue%
+}
+
+\DeclareOption*{%
+    \PackageWarning{preamble}{Unknown option '\CurrentOption'}
+}
+
+\ExecuteOptions{}
+\ProcessOptions*
+
+% ----- Packages & Settings -----
+
+% Math 
+\RequirePackage{amsmath, amssymb, amsthm}
+
+% Font
+\RequirePackage[T1]{fontenc}
+\RequirePackage{newtxtext}
+\RequirePackage[smallerops]{newtxmath}
+
+% Math shortcuts
+\RequirePackage{siunitx}  % formatting SI units (loaded before physics to avoid warning)
+\RequirePackage{physics-minimal, systeme, mathtools, nccmath}
+\RequirePackage{centernot}  % \centernot command
+\RequirePackage{cancel}  % cancel numbers
+\RequirePackage{signchart}  % sign charts
+\RequirePackage{multirow}
+\RequirePackage{thmtools}
+\RequirePackage{kbordermatrix}  % border text on matrices
+\RequirePackage{widebar}
+
+% Tables
+\RequirePackage{booktabs}  % Improved tables
+
+% Graphics
+\RequirePackage{graphicx}  % External graphics
+\RequirePackage[all]{xy}  % Diagrams
+\RequirePackage{xcolor}  % Colored text
+\ifopt@narrowmargins
+        \RequirePackage[margin=0.6in, headheight=14pt, headsep=10pt]{geometry}
+    \else
+        \RequirePackage[margin=1in, headheight=14pt]{geometry}
+\fi
+\colorlet{darkgreen}{green!60!black}
+
+% Formatting
+\RequirePackage{multicol}  % Multiple columns in document
+\RequirePackage{parskip, float}
+\RequirePackage{microtype}  % Micro-kerning
+\RequirePackage{enumitem}  % enumerate item labels
+\RequirePackage{aliascnt}  % creating counter aliases
+\RequirePackage{bm}
+\RequirePackage{changepage}  % custom margin adjustment
+\RequirePackage{pdflscape}  % landscape pages
+\RequirePackage{oubraces}  % better over/under braces
+\RequirePackage{textcomp}
+\RequirePackage{topsection} % topsection 
+
+% multicols columnbreak vertical fill
+\let\oldcolumnbreak\columnbreak
+\renewcommand\columnbreak{\vfill\null\oldcolumnbreak}
+
+% Headers
+\RequirePackage{fancyhdr, titling}
+\RequirePackage[explicit]{titlesec}  % fancy section headers
+\RequirePackage{titletoc}
+
+% Misc.
+\RequirePackage{comment}  % Comment environments
+\RequirePackage{xr}  % Cross-references between subfiles
+\RequirePackage{subfiles}
+\RequirePackage{ifthen}  % latex if/else conditionals
+\RequirePackage{suffix}  % commands with suffix
+\RequirePackage{xparse}  % custom commands
+\RequirePackage{xstring}  % string manipulation commands
+\RequirePackage{etoolbox}  % various utilities for command creation
+
+% Code input formatting
+\RequirePackage{listings}  % code environment
+% Atom One Light color scheme (https://github.com/atom/atom/tree/master/packages/one-light-syntax/styles)
+\definecolor{lstfgcolor}{RGB}{56, 58, 66}  % HSL(230, 8%, 24%); black
+\definecolor{lstbgcolor}{RGB}{250, 250, 250}  % HSL(230, 1%, 98%); white
+\definecolor{lstcommentcolor}{RGB}{160, 161, 167}  % HSL(230, 4%, 64%); gray
+\definecolor{lstidentifiercolor}{RGB}{228, 86, 73}  % HSL(5, 74%, 59%); red
+\definecolor{lststringcolor}{RGB}{93, 147, 92}  % HSL(119, 23%, 47%); green
+\definecolor{lstkeywordcolor}{RGB}{166, 38, 164}  % HSL(301, 63%, 40%); purple
+\definecolor{lstlinenumbercolor}{RGB}{157, 157, 159}  % HSL(230, 1%, 62%)
+
+\lstset{%
+    columns=fullflexible,
+    numbers=left,
+    upquote=true,
+    xleftmargin=2em,
+    % colors
+    backgroundcolor=\color{lstbgcolor},
+    basicstyle=\color{lstfgcolor}\footnotesize\ttfamily,
+    commentstyle=\color{lstcommentcolor}\itshape,
+    identifierstyle={},%\color{lstidentifiercolor},
+    stringstyle=\color{lststringcolor},
+    keywordstyle=\color{lstkeywordcolor},%\bfseries,
+    numberstyle=\color{lstlinenumbercolor}\ttfamily,
+    captionpos=t,
+}
+
+\RequirePackage{minted}
+    \RequirePackage{fancyvrb}
+    \setminted{%
+        autogobble,
+        breaklines,
+        linenos,
+        mathescape,
+        fontsize=\footnotesize,
+        bgcolor=lstbgcolor,
+        numbersep=10pt,
+        style=atomonelight,  % custom minted style; falls back to default style
+        xleftmargin=2em,
+    }
+    \renewcommand{\theFancyVerbLine}{\ttfamily \textcolor{lstlinenumbercolor}{\arabic{FancyVerbLine}}}
+    \fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
+
+
+% Links/References
+\RequirePackage[hidelinks]{hyperref}  % Links
+\AtBeginDocument{
+  \hypersetup{
+    pdftitle = {\@title},
+    pdfauthor = {\@author}
+  }
+}
+\RequirePackage{cleveref}  % better references
+\RequirePackage{bookmark}  % hyperref extension
+
+% ----- Math -----
+\DeclareMathOperator{\proj}{proj}  % Projection
+\DeclareMathOperator{\Span}{span}  % Vector/Matrix Span
+\DeclareMathOperator{\range}{range}  % Range (span of columns)
+\DeclareMathOperator{\Null}{N}  % Null space
+\DeclareMathOperator{\Cols}{C}  % Col space
+\DeclareMathOperator{\trace}{tr}
+\DeclareMathOperator{\rank}{rank}
+
+\DeclareMathOperator{\erf}{erf}  % Gauss error function
+\DeclareMathOperator{\corr}{corr}  % correlation
+
+\DeclareMathOperator{\from}{\colon}
+\newcommand{\divides}{\mid}
+\newcommand{\notdivides}{\nmid}
+\newcommand{\powerset}{\mathscr{P}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\U}{\mathbb{U}}
+\newcommand{\C}{\mathbb{C}}
+
+\renewcommand{\Pr}{\operatorname{\mathbb{P}}\mathopen{}\opbraces{}}  % Probability
+\WithSuffix\newcommand\Pr*{\operatorname{\mathbb{P}}\mathopen{}}  % Probability (no qty)
+\newcommand{\Exp}{\operatorname{\mathbb{E}}\mathopen{}\opbraces{}}  % Expected value
+\WithSuffix\newcommand\Exp*{\operatorname{\mathbb{E}}\mathopen{}}  % Expected value (no qty)
+\newcommand{\LLSE}{\operatorname{\mathbb{L}}\mathopen{}\opbraces{}}  % Linear least squares estimator
+\WithSuffix\newcommand\LLSE*{\operatorname{\mathbb{L}}\mathopen{}}  % Linear least squares estimator (no qty)
+\DeclareMathOperator{\Var}{Var}  % Variance
+\DeclareMathOperator{\Cov}{Cov}  % Covariance
+\DeclareMathOperator{\Corr}{Corr}  % Correlation
+
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+
+\newcommand{\va}[1]{\vec{\bm{#1}}}  % Vector with italic bold
+\newcommand{\mat}[1]{\mathbf{#1}}  % Matrix variable
+\newcommand{\dd}{\dl3}
+\newcommand{\ddel}{\dl.delta.3}
+\newcommand{\ddp}{\dl.p.3}
+\newcommand{\definedas}{\coloneqq}
+
+% matrix row/column vector rules
+% \newcommand{\rowrule}{\rotatebox[origin=c]{90}{$\vert$}}
+\newcommand{\rowrule}{\rule[.5ex]{1em}{0.4pt}}
+\newcommand{\colrule}{\vert}
+
+\DeclarePairedDelimiter{\pairedabs}{\lvert}{\rvert}
+\newcommand{\abs}[1]{\pairedabs*{#1}}
+\DeclarePairedDelimiter{\pairednorm}{\lVert}{\rVert}
+\newcommand{\norm}[1]{\pairednorm*{#1}}
+\DeclarePairedDelimiter{\pairedvinner}{\langle}{\rangle}  % Inner product
+\newcommand{\vinner}[1]{\pairedvinner*{#1}}
+\DeclarePairedDelimiter{\pairedfloor}{\lfloor}{\rfloor}
+\newcommand{\floor}[1]{\pairedfloor*{#1}}
+\DeclarePairedDelimiter{\pairedceil}{\lceil}{\rceil}
+\newcommand{\ceil}[1]{\pairedceil*{#1}}
+
+\DeclarePairedDelimiter{\pairedeval}{.}{\rvert}  % evaluated at bar
+\newcommand{\eval}[1]{\pairedeval*{#1}}
+
+% Distributions
+\DeclareMathOperator{\Unif}{Uniform}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Bern}{Bernoulli}
+\DeclareMathOperator{\Geom}{Geom}
+\DeclareMathOperator{\Pois}{Pois}
+\DeclareMathOperator{\Expdist}{Exp}
+\DeclareMathOperator{\Norm}{\mathcal{N}}
+\DeclareMathOperator{\PP}{PP}
+\DeclareMathOperator{\Erlang}{Erlang}
+
+% ----- Commands -----
+
+% matrix augment
+\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
+    \hskip -\arraycolsep%
+    \let\@ifnextchar\new@ifnextchar%
+    \array{#1}
+}
+
+\NewDocumentCommand{\grad}{e{_^}}{% gradient replacement, from egreg
+    \mathop{}\!% \mathop for good spacing before \nabla
+    \nabla
+    \IfValueT{#1}{_{\!#1}}% tuck in the subscript
+    \IfValueT{#2}{^{#2}}% possible superscript
+}
+
+% ----- Commands -----
+\def\packagename{random.sty}
+
+% ----- Headers & Boxes -----
+
+% Boxes
+\newif\ifintcbthm%
+
+\ifopt@tcbtheorems
+    \RequirePackage{xargs}  % multiple optional arguments
+    \RequirePackage{tcolorbox}  % colored boxes
+    \tcbuselibrary{theorems}  % use of colored boxes for theorem environments
+    \tcbuselibrary{breakable}
+    \tcbuselibrary{skins}
+    \tcbuselibrary{listings}
+    % for minted codeboxes
+    \tcbuselibrary{minted}
+    \tcbset{listing engine=minted}
+
+    % code def
+    \newtcblisting[auto counter, number within=section, list inside=definitionlist]{tcbcodef}[2][]{%
+        colback=red!5, colbacktitle=red!20, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, breakable, enhanced, parbox=false,
+        segmentation style={solid, draw=red!20, line width=1pt},
+        comment and listing,
+	listing engine=minted,
+        title=Definition~\thetcbcounter,
+        comment={#2},#1
+    }
+    % code example
+    \newtcblisting[auto counter, number within=section, list inside=examplelist]{tcbcodex}[2][]{%
+    colback=gray!5, colbacktitle=gray!40, coltitle=black,
+    frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+    fonttitle=\bfseries, breakable, enhanced, parbox=false,
+    segmentation style={solid, draw=gray!20, line width=1pt},
+    comment and listing,
+    listing engine = minted,
+    title=Example~\thetcbcounter,
+    comment={#2},#1
+    }
+    % \newenvironmentx{codex}[2][1={},2={}]{%
+    %     \begin{tcbcodex}{#1}{#2}
+    %         }{%
+    %     \end{tcbcodex}
+    % }
+
+    % definition
+    \newtcbtheorem[number within=section, list inside=definitionlist]{tcbdefinition}{Definition}{%
+        colback=red!5, colbacktitle=red!20, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, breakable, enhanced, parbox=false
+    }{def}
+    \newenvironmentx{definition}[2][1={},2={}]{%
+        \begin{tcbdefinition}{#1}{#2}
+        }{%
+        \end{tcbdefinition}
+    }
+    % example
+    \newtcbtheorem[number within=section, list inside=examplelist]{tcbexample}{Example}{%
+        colback=gray!5, colbacktitle=gray!40, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, segmentation style={solid, draw=gray!20, line width=1pt}, breakable, enhanced, parbox=false
+    }{ex}
+    \newenvironmentx{example}[2][1={},2={}]{%
+        \begin{tcbexample}{#1}{#2}
+        }{%
+        \end{tcbexample}
+    }
+    % exercise
+    \newtcbtheorem[number within=section, list inside=examplelist]{tcbexercise}{Exercise}{%
+        colback=green!5, colbacktitle=green!20, coltitle=black,
+        frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries, segmentation style={solid, draw=green!20, line width=1pt}, breakable, enhanced, parbox=false
+    }{exer}
+    \newenvironmentx{exercise}[2][1={},2={}]{%
+        \begin{tcbexercise}{#1}{#2}
+        }{%
+        \end{tcbexercise}
+    }
+    % theorem
+    \newtcbtheorem[number within=section, list inside=theoremlist]{tcbtheorem}{Theorem}{%
+        enhanced, breakable,
+        colback=blue!5, colbacktitle=blue!20, coltitle=black,
+        frame hidden, parbox=false,
+        arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries,
+        segmentation style={solid, draw=blue!20, line width=1pt}
+    }{thm}
+    \newenvironmentx{theorem}[2][1={},2={}]{%
+        \intcbthmtrue
+        \begin{tcbtheorem}{#1}{#2}%
+        }{
+        \end{tcbtheorem}
+        \intcbthmfalse%
+    }
+    % lemma
+    \newtcbtheorem[number within=section, list inside=lemmalist]{tcblemma}{Lemma}{%
+        enhanced, breakable,
+        colback=blue!5, colbacktitle=blue!20, coltitle=black,
+        frame hidden, parbox=false,
+        arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+        fonttitle=\bfseries,
+        segmentation style={solid, draw=blue!20, line width=1pt}
+    }{lem}
+    \newenvironmentx{lemma}[2][1={},2={}]{%
+        \intcbthmtrue%
+        \begin{tcblemma}{#1}{#2}
+        }{%
+        \end{tcblemma}
+        \intcbthmfalse%
+    }
+    % note
+    \newtcbtheorem[number within=section, list inside=notelist]{tcbnote}{Note}{%
+    colback=violet!5, colbacktitle=violet!20, coltitle=black,
+    frame hidden, arc=2pt, titlerule=0pt, toptitle=2pt, bottomtitle=2pt,
+    fonttitle=\bfseries, breakable, enhanced, parbox=false
+    }{exer}
+    \newenvironmentx{notebox}[2][1={},2={}]{%
+    \begin{tcbnote}{#1}{#2}
+}{%
+    \end{tcbnote}
+    }
+    % name env 
+    \pgfkeysifdefined{/tcb/name}{\fail}{
+    \tcbset{
+    name/.style={after title={: #1}}}
+    }
+    % redefine proof environment
+    \expandafter\let\expandafter\oldproof\csname\string\proof\endcsname%
+    \let\oldendproof\endproof%
+    \renewenvironment{proof}[1][\proofname]{%
+        \ifintcbthm\tcbline*\fi
+        \oldproof[#1]
+        }{
+        \oldendproof
+    }
+    % cleveref definitions
+    \crefname{tcb@cnt@tcbexample}{example}{examples}
+    \Crefname{tcb@cnt@tcbexample}{Example}{Examples}
+    \crefname{tcb@cnt@tcbdefinition}{definition}{definitions}
+    \Crefname{tcb@cnt@tcbdefinition}{Definition}{Definitions}
+    \crefname{tcb@cnt@tcbtheorem}{theorem}{theorems}
+    \Crefname{tcb@cnt@tcbtheorem}{Theorem}{Theorems}
+    \crefname{tcb@cnt@tcblemma}{lemma}{lemmas}
+    \Crefname{tcb@cnt@tcblemma}{Lemma}{Lemmas}
+\else
+    % plain theorems
+    \newtheorem{theorem}{Theorem}[section]
+    \newtheorem{lemma}{Lemma}[section]
+    \newtheorem{definition}{Definition}[section]
+\fi
+
+% Fancy section titles
+\ifopt@fancysections
+    \def\sec@sectiondate{}
+    \def\sec@sectiondesc{}
+    \newcommand\sectiondate[1]{\def\sec@sectiondate{#1}}
+    \newcommand\sectiondesc[1]{\def\sec@sectiondesc{#1}}
+
+    % lecture
+    \titleclass{\lecturesection}{straight}[\chapter]
+    \newcommand{\toclevel@lecturesection}{1}
+    \newcommand{\ttll@lecturesection}{1}
+    \newcommand{\thelecturesection}{\arabic{lecturesection}}
+    \titleclass{\section}{straight}{\chapter}
+    \newaliascnt{lecturesection}{section}
+    \contentsmargin{1.5em}
+    \titlecontents{lecturesection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    \titlespacing*{\lecturesection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    \newcommand\lecture[2][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    \sectiondesc{#2}\lecturesection[#2]{Lecture \thesection}}
+
+    \titleformat{\lecturesection}[frame]
+    {\normalfont}
+    {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    {3pt}
+    {\centering{\Large\bfseries\filcenter#1}
+    \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+    
+    % homework
+    \titleclass{\hwsection}{straight}[\chapter]
+    \newcommand{\toclevel@hwsection}{1}
+    \newcommand{\ttll@hwsection}{1}
+    \newcommand{\thehwsection}{\arabic{hwsection}}
+    \titleclass{\section}{straight}{\chapter}
+    \newaliascnt{hwsection}{section}
+    \contentsmargin{1.5em}
+    \titlecontents{hwsection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    \titlespacing*{\hwsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    \newcommand\homework[3][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    \sectiondesc{#2}\hwsection[#2]{Homework #3}}
+
+    \titleformat{\hwsection}[frame]
+    {\normalfont}
+    {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    {3pt}
+    {\centering{\Large\bfseries\filcenter#1}
+    \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+
+    % chapter
+    \titleclass{\chapsection}{straight}[\chapter]
+    \newcommand{\toclevel@chapsection}{1}
+    \newcommand{\ttll@chapsection}{1}
+    \newcommand{\thechapsection}{\arabic{chapsection}}
+    \titleclass{\section}{straight}{\chapter}
+    \newaliascnt{chapsection}{section}
+    \contentsmargin{1.5em}
+    \titlecontents{chapsection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    \titlespacing*{\chapsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    \newcommand\bookchap[3][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    \sectiondesc{#2}\chapsection[#2]{Chapter #3}}
+
+    \titleformat{\chapsection}[frame]
+    {\normalfont}
+    {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    {3pt}
+    {\centering{\Large\bfseries\filcenter#1}
+    \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+
+    % div
+    \titleclass{\divsection}{straight}[\chapter]
+    \newcommand{\toclevel@divsection}{1}
+    \newcommand{\ttll@divsection}{1}
+    \newcommand{\thedivsection}{\arabic{divsection}}
+    \titleclass{\section}{straight}{\chapter}
+    \newaliascnt{divsection}{section}
+    \contentsmargin{1.5em}
+    \titlecontents{divsection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    \titlespacing*{\divsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    \newcommand\fancysec[3][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}\sectiondesc{#2}\divsection[#2]{#3}}
+
+    \titleformat{\divsection}[frame]
+    {\normalfont}
+    {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    {3pt}
+    {\centering{\Large\bfseries\filcenter#1}
+    \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+
+    % div - no TOC
+    \titleclass{\ndivsection}{straight}[\chapter]
+    \newcommand{\thendivsection}{\arabic{ndivsection}}
+    \titleclass{\section}{straight}{\chapter}
+    \newaliascnt{ndivsection}{section}
+    \contentsmargin{1.5em}
+    \titlecontents{ndivsection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    \titlespacing*{\ndivsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    \newcommand\nfancysec[3][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    \sectiondesc{#2}\ndivsection[#2]{#3}}
+
+    \titleformat{\ndivsection}[frame]
+    {\normalfont}
+    {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sect
+iondate\enspace}}
+    {3pt}
+    {\centering{\Large\bfseries\filcenter#1}
+    \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@se
+ctiondesc}}}
+    [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+
+    \ifopt@chapterheadings
+    % ndiv
+    % \titleclass{\ndivsection}{straight}[\part]
+    % \newcommand{\toclevel@ndivsection}{0}
+    % \newcommand{\ttll@ndivsection}{0}
+    % \newcommand{\thendivsection}{\arabic{ndivsection}}
+    % \titleclass{\chapter}{straight}{\part}
+    % \newaliascnt{ndivsection}{section}
+    % \contentsmargin{1.5em}
+    % \titlecontents{ndivsection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    % \titlespacing*{\ndivsection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    % \newcommand\ndivider[3][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    % \sectiondesc{#2}\ndivsection[#2]{#3}}
+
+    % \titleformat{\ndivsection}[frame]
+    % {\normalfont}
+    % {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    % {3pt}
+    % {\centering{\Large\bfseries\filcenter#1}
+    % \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    % [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+    
+    % % lecture
+    % \titleclass{\lecturesection}{straight}[\chapter]
+    % \newcommand{\toclevel@lecturesection}{1}
+    % \newcommand{\ttll@lecturesection}{1}
+    % \newcommand{\thelecturesection}{\arabic{lecturesection}}
+    % \titleclass{\section}{straight}{\chapter}
+    % \newaliascnt{lecturesection}{section}
+    % \contentsmargin{1.5em}
+    % \titlecontents{lecturesection}[1.5em]{\addvspace{1em}\bfseries}{\contentslabel{1.5em}}{}{\hfill\contentspage}
+    % \titlespacing*{\lecturesection}{0pt}{2\baselineskip}{1\baselineskip}
+
+    % \newcommand\lecture[2][]{\ifthenelse{\equal{#1}{}}{\sectiondate{}}{\sectiondate{#1}}
+    % \sectiondesc{#2}\lecturesection[#2]{Lecture \thesection}}
+
+    % \titleformat{\lecturesection}[frame]
+    % {\normalfont}
+    % {\ifthenelse{\equal{\sec@sectiondate}{}}{}{\filright\enspace\itshape\sec@sectiondate\enspace}}
+    % {3pt}
+    % {\centering{\Large\bfseries\filcenter#1}
+    % \ifthenelse{\equal{\sec@sectiondesc}{}}{}{\\[3pt] {\normalsize\itshape\sec@sectiondesc}}}
+    % [\def\sec@sectiondate{}\def\sec@sectiondesc{}]
+    
+    \fi
+\fi
+
+
+% ----- Misc. -----
+
+% ----- Spacing -----
+
+% displaymath spacing
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\abovedisplayshortskip}{4pt}
+\setlength{\belowdisplayskip}{5pt}
+\setlength{\belowdisplayshortskip}{4pt}
+\allowdisplaybreaks[1]
+
+% add table of contents as a bookmark
+\pretocmd{\tableofcontents}{\belowpdfbookmark{\contentsname}{toc}}{}{}
+
+% edit lengths for cheatsheet
+\ifopt@cheatsheetlengths
+    % change at beginning of document because they reset
+    \AtBeginDocument{%
+        \setlength{\abovedisplayskip}{2pt plus 1pt minus 2pt}
+        \setlength{\belowdisplayskip}{2pt plus 1pt minus 2pt}
+        \setlength{\abovedisplayshortskip}{0pt}
+        \setlength{\belowdisplayshortskip}{0pt}
+        \setlength{\multicolsep}{4pt plus 1pt minus 1pt}
+        \setlength{\jot}{2pt}
+        \setlength{\columnsep}{3pt}
+        \setlength{\parskip}{2pt}
+        %\setlength{\topskip}{0pt}
+    }
+
+    % lengths for enumerate lists
+    \setlist{nosep, leftmargin=10pt}
+\fi
